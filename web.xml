@@ -1,0 +1,19 @@
+<web-app>
+	<welcome-file-list>
+		<welcome-file-> 
+			index.html
+		</welcome-file-> 
+	</welcome-file-list>
+  <servlet>
+    <description></description>
+    <display-name>GeneraBarcode</display-name>
+    <servlet-name>GeneraBarcode</servlet-name>
+    <servlet-class>comun.GeneraBarcode</servlet-class>
+  </servlet>
+  <session-config><session-timeout>10</session-timeout></session-config>
+  <servlet-mapping>
+    <servlet-name>GeneraBarcode</servlet-name>
+    <url-pattern>/GeneraBarcode</url-pattern>
+  </servlet-mapping>
+</web-app>
+<!-- touch 11/21/2025 12:46:06 -->

@@ -1,0 +1,157 @@
+// Decompiled by DJ v3.7.7.81 Copyright 2004 Atanas Neshkov  Date: 13/04/2011 10:23:43 a.m.
+// Home Page : http://members.fortunecity.com/neshkov/dj.html  - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   preregistro_continuidad_da.java
+
+package admision;
+
+import comun.BD;
+import java.sql.ResultSet;
+
+public class preregistro_continuidad_da
+{
+
+    public preregistro_continuidad_da()
+    {
+        SMBD = new BD();
+        cve_alumno = 0;
+        fecha_examen_titulacion = "";
+        cedula = "";
+        promedio_tsu = 0.0F;
+        puntuacion_ejectsu = 0.0F;
+        carrera = "";
+        promedio_examen_continuidad = 0.0F;
+        turno = "";
+        folio_exa = 0;
+        cve_per_ini_cont = 0;
+        cve_carrera_cont = 0;
+        expediente = "";
+        cve_carrera_tsu = 0;
+        cve_per_ini_tsu = 0;
+    }
+
+    public void nuevo()
+        throws Exception
+    {
+        int i = 0;
+        if(fecha_examen_titulacion == null || fecha_examen_titulacion == "")
+            fecha_examen_titulacion = SMBD.fecha_convertida(fecha_examen_titulacion);
+        consultas = (new StringBuilder()).append("INSERT INTO aspirantes_continuidad(cve_alumno,cve_universidad, cve_unidad_academica,cedula,promedio_tsu,puntuacion_ejetsu, fecha_examen_titulacion, cve_carrera, activo, cve_turno)VALUES (").append(cve_alumno).append(", 1,1,'").append(cedula).append("',").append(promedio_tsu).append(",").append(puntuacion_ejectsu).append(",'").append(fecha_examen_titulacion).append("',").append(cve_carrera).append(",1,").append(cve_turno).append(") ").toString();
+        SMBD.insertarSQL(consultas);
+        consultas = (new StringBuilder()).append("SELECT cve_alumno FROM alumnos WHERE(cve_alumno=").append(cve_alumno).append(")").toString();
+        for(rs = SMBD.SQLBD(consultas); rs.next();)
+            i = rs.getInt(1);
+
+        SMBD.desconectarBD();
+        if(i == 0)
+        {
+            inserta_alumno();
+        } else
+        {
+            consultas = (new StringBuilder()).append("UPDATE alumnos SET cve_periodo_inicio_continuidad=").append(cve_per_ini_cont).append(", cve_carrera_continuidad=").append(cve_carrera).append(" WHERE (cve_alumno = ").append(cve_alumno).append(") ").toString();
+            SMBD.insertarSQL(consultas);
+        }
+    }
+
+    public void actualiza()
+        throws Exception
+    {
+        int i = 0;
+        if(fecha_examen_titulacion == null || fecha_examen_titulacion == "")
+            fecha_examen_titulacion = SMBD.fecha_convertida(fecha_examen_titulacion);
+        consultas = (new StringBuilder()).append("UPDATE aspirantes_continuidad SET cedula = '").append(cedula).append("', ").append("promedio_tsu = ").append(promedio_tsu).append(", ").append("puntuacion_ejetsu = ").append(puntuacion_ejectsu).append(", ").append("fecha_examen_titulacion = '").append(fecha_examen_titulacion).append("', ").append("cve_carrera=").append(cve_carrera_cont).append(", folio_exa=").append(folio_exa).append(", ").append("cve_turno = ").append(cve_turno).append(" ").append("WHERE  (cve_alumno = ").append(cve_alumno).append(") ").toString();
+        SMBD.insertarSQL(consultas);
+        consultas = (new StringBuilder()).append("SELECT cve_alumno FROM alumnos WHERE(cve_alumno=").append(cve_alumno).append(")").toString();
+        for(rs = SMBD.SQLBD(consultas); rs.next();)
+            i = rs.getInt(1);
+
+        SMBD.desconectarBD();
+        if(i == 0)
+        {
+            inserta_alumno();
+        } else
+        {
+            consultas = (new StringBuilder()).append("UPDATE alumnos SET cve_periodo_inicio_continuidad=").append(cve_per_ini_cont).append(", cve_carrera_continuidad=").append(cve_carrera).append(" WHERE (cve_alumno = ").append(cve_alumno).append(") ").toString();
+            SMBD.insertarSQL(consultas);
+        }
+    }
+
+    public void inserta_alumno()
+        throws Exception
+    {
+        consultas = (new StringBuilder()).append("INSERT INTO alumnos (cve_alumno,cve_unidad_academica,cve_universidad,expediente,cve_carrera,duracion, cve_periodo_inicio,cve_turno,grado_actual,activo,cve_carrera_continuidad,cve_periodo_inicio_continuidad, continuidad,cve_status, cve_causa_mov_status) VALUES(").append(cve_alumno).append(",1,1,'").append(expediente).append("',").append(cve_carrera_tsu).append(",6,").append(cve_per_ini_tsu).append(",").append(cve_turno).append(",6,1, ").append(" ").append(cve_carrera).append(",").append(cve_per_ini_cont).append(",1,2,9) ").toString();
+        SMBD.insertarSQL(consultas);
+    }
+
+    public void busca()
+        throws Exception
+    {
+        consultas = (new StringBuilder()).append("SELECT   aspirantes_continuidad.cve_alumno, aspirantes_continuidad.cedula, aspirantes_continuidad.promedio_tsu, aspirantes_continuidad.puntuacion_ejetsu, aspirantes_continuidad.fecha_examen_titulacion, carreras_universidad.descripcion, carreras_universidad.cve_carrera, turnos.cve_turno, turnos.descripcion AS Expr1,folio_exa FROM  aspirantes_continuidad LEFT OUTER JOIN carreras_universidad ON aspirantes_continuidad.cve_carrera = carreras_universidad.cve_carrera LEFT OUTER JOIN turnos ON aspirantes_continuidad.cve_turno = turnos.cve_turno WHERE (aspirantes_continuidad.cve_alumno =").append(cve_alumno).append(") ").toString();
+        rs = SMBD.SQLBD(consultas);
+        do
+        {
+            if(!rs.next())
+                break;
+            cve_alumno = rs.getInt(1);
+            cedula = rs.getString(2);
+            promedio_tsu = rs.getFloat(3);
+            puntuacion_ejectsu = rs.getFloat(4);
+            fecha_examen_titulacion = rs.getString(5);
+            carrera = rs.getString(6);
+            cve_carrera = rs.getInt(7);
+            cve_turno = rs.getInt(8);
+            turno = rs.getString(9);
+            folio_exa = rs.getInt(10);
+            if(fecha_examen_titulacion != null || fecha_examen_titulacion != "")
+                fecha_examen_titulacion = (new StringBuilder()).append(fecha_examen_titulacion.substring(8, 10)).append("/").append("").append(fecha_examen_titulacion.substring(5, 7)).append("/").append("").append(fecha_examen_titulacion.substring(0, 4)).toString();
+        } while(true);
+        SMBD.desconectarBD();
+        consultas = "SELECT expediente, cve_carrera, cve_periodo_inicio, cve_carrera_continuidad, cve_periodo_inicio_continuidad FROM alumnos WHERE (cve_alumno = 7169) ";
+        for(rs = SMBD.SQLBD(consultas); rs.next();)
+        {
+            expediente = rs.getString(1);
+            cve_carrera_tsu = rs.getInt(2);
+            cve_per_ini_tsu = rs.getInt(3);
+            cve_carrera_cont = rs.getInt(4);
+            cve_per_ini_cont = rs.getInt(5);
+        }
+
+        SMBD.desconectarBD();
+    }
+
+    public void busca_actualiza()
+        throws Exception
+    {
+        int i = 0;
+        consultas = (new StringBuilder()).append("SELECT cve_alumno FROM  aspirantes_continuidad WHERE (cve_alumno = ").append(cve_alumno).append(")").toString();
+        for(rs = SMBD.SQLBD(consultas); rs.next();)
+            i = rs.getInt(1);
+
+        SMBD.desconectarBD();
+        SMBD.desconectarBD();
+        if(i > 0)
+            actualiza();
+        else
+            nuevo();
+    }
+
+    public float promedio_tsu;
+    public float puntuacion_ejectsu;
+    public float promedio_examen_continuidad;
+    public int cve_alumno;
+    public int cve_carrera_cont;
+    public int cve_carrera;
+    public int cve_per_ini_cont;
+    public int cve_turno;
+    public int folio_exa;
+    public int cve_carrera_tsu;
+    public int cve_per_ini_tsu;
+    public String cedula;
+    public String fecha_examen_titulacion;
+    public String carrera;
+    public String turno;
+    public String expediente;
+    private String consultas;
+    ResultSet rs;
+    BD SMBD;
+}
