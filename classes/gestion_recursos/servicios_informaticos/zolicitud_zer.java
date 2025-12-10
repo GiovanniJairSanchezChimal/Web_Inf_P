@@ -28,11 +28,7 @@ public class zolicitud_zer {
    public String motivo_kanzelazion = "";
    public String mensaje = "";
    public String comentario_evaluacion = "";
-   public String comentario_kalifikazion = "";
-   public String comentario_kalifikazion_tiempo = "";
-   public String comentario_kalifikazion_amabilidad = "";
    public int cve_usuario_gral = 0;
-   // Campos añadidos para soportar notificación por correo en reasignación
    public String mensaje_a = "";
    public String strCorreoPersonalSoporte = "";
    public String solSolicitante = "";
@@ -49,9 +45,9 @@ public class zolicitud_zer {
          this.SMBD = new BD();
          this.aaa = new e138();
          this.e = new e138();
-      } catch (Exception ex) {
-         this.error = (ex.getMessage() == null) ? "Error inicializando zolicitud_zer" : ex.getMessage();
-         throw new RuntimeException(ex);
+      } catch (Exception var2) {
+         this.error = var2.getMessage() == null ? "Error inicializando zolicitud_zer" : var2.getMessage();
+         throw new RuntimeException(var2);
       }
    }
 
@@ -60,24 +56,24 @@ public class zolicitud_zer {
       this.anio = this.SMBD.buscaSQL(this.consultas);
       this.consultas = "SELECT MAX(cve_zol) AS maximo FROM zolizitudez_trabajo WHERE (anio = " + this.anio + ")";
       this.folio = this.SMBD.buscaSQL(this.consultas) + 1;
-      this.consultas = "INSERT INTO zolizitudez_trabajo (cve_zol, anio, cve_zolizitante, problema, fecha_regiztro, fecha_azignazion, kategorizazion,cve_perzona_zoporte, zoluzion, fecha_termino, fecha_evaluazion, kalifikazion, num_inventario, cve_bien, fecha_kanzelazion, motivo_kanzelazion,kalifikazion_tiempo, kalifikazion_amabilidad, comentario_evaluacion) VALUES (" + this.folio + "," + this.anio + "," + this.cve_zolizitante + ",'" + this.problema + "', GETDATE()," + "null,'---',0,'',null,null,0,'" + this.num_inventario + "',0, null, ''," + "0,0,'') ";
+      this.consultas = "INSERT INTO zolizitudez_trabajo (cve_zol, anio, cve_zolizitante, problema, fecha_regiztro, fecha_azignazion, kategorizazion,cve_perzona_zoporte, zoluzion, fecha_termino, fecha_evaluazion, kalifikazion, num_inventario, cve_bien, fecha_kanzelazion, motivo_kanzelazion,kalifikazion_tiempo, kalifikazion_amabilidad, comentario_evaluacion) VALUES (" + this.folio + "," + this.anio + "," + this.cve_zolizitante + ",'" + this.problema + "', GETDATE(),null,'---',0,'',null,null,0,'" + this.num_inventario + "',0, null, '',0,0,'') ";
       this.SMBD.insertarSQL(this.consultas);
       if (this.num_inventario.length() > 4) {
          this.consultas = "SELECT cve_bien AS maximo FROM alta_activo_fijo WHERE (num_inven LIKE '%" + this.num_inventario + "%') ";
          this.cve_bien = this.SMBD.buscaSQL(this.consultas);
          if (this.cve_bien > 0) {
-            this.consultas = "UPDATE zolizitudez_trabajo SET cve_bien = " + this.cve_bien + " " + "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") ";
+            this.consultas = "UPDATE zolizitudez_trabajo SET cve_bien = " + this.cve_bien + " WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") ";
             this.SMBD.insertarSQL(this.consultas);
          }
       }
 
       this.aaa.encabezado = "Notification System (Solicitudes de trabajo)";
-      this.mensaje = "ESTIMADO COMPA\u00d1ERO, HA RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", " + "PARA LA ATENCI\u00d3N DE LA SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " " + "\n " + "\n " + "FAVOR DE INGRESAR AL SIISC (SOLICITUDES DE TRABAJO) " + "\n " + "\n " + "\n" + "ATENTAMENTE \n" + "SISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \n" + "DEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
+      this.mensaje = "ESTIMADO COMPA\u00d1ERO, HA RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", PARA LA ATENCI\u00d3N DE LA SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " \n \n FAVOR DE INGRESAR AL SIISC (SOLICITUDES DE TRABAJO) \n \n \nATENTAMENTE \nSISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \nDEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
       this.aaa.envio_general(74, this.mensaje);
    }
 
    public void actualiza_zolizitud() throws Exception {
-      this.consultas = "UPDATE zolizitudez_trabajo SET problema = '" + this.problema + "' " + "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_azignazion IS NULL) AND (fecha_kanzelazion IS NULL)";
+      this.consultas = "UPDATE zolizitudez_trabajo SET problema = '" + this.problema + "' WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_azignazion IS NULL) AND (fecha_kanzelazion IS NULL)";
       this.SMBD.insertarSQL(this.consultas);
    }
 
@@ -113,40 +109,32 @@ public class zolicitud_zer {
    }
 
    public void azignazion_zolizitud() throws Exception {
-      this.consultas = "UPDATE zolizitudez_trabajo SET fecha_azignazion = GETDATE(), cve_perzona_zoporte = " + this.cve_perzona_zoporte + " " + "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_azignazion IS NULL) AND (fecha_kanzelazion IS NULL)";
+      this.consultas = "UPDATE zolizitudez_trabajo SET fecha_azignazion = GETDATE(), cve_perzona_zoporte = " + this.cve_perzona_zoporte + " WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_azignazion IS NULL) AND (fecha_kanzelazion IS NULL)";
       this.SMBD.insertarSQL(this.consultas);
       this.aaa.encabezado = "Notification System (Solicitudes de trabajo - Atenci\u00f3n)";
-      this.mensaje = "ESTIMADO COMPA\u00d1ERO, HA RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", " + "PARA LA ATENCI\u00d3N DE LA SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " " + "\n " + "\n " + "FAVOR DE INGRESAR AL SIISC (SOLICITUDES DE TRABAJO) " + "\n " + "\n " + "\n" + "ATENTAMENTE \n" + "SISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \n" + "DEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
+      this.mensaje = "ESTIMADO COMPA\u00d1ERO, HA RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", PARA LA ATENCI\u00d3N DE LA SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " \n \n FAVOR DE INGRESAR AL SIISC (SOLICITUDES DE TRABAJO) \n \n \nATENTAMENTE \nSISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \nDEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
       this.aaa.envio_general(this.cve_perzona_zoporte, this.mensaje);
    }
 
    public void reazignazion_zolizitud() throws Exception {
-      this.consultas = "UPDATE zolizitudez_trabajo SET cve_perzona_zoporte = " + this.cve_perzona_zoporte + " " +
-         "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_kanzelazion IS NULL) AND (fecha_azignazion IS NOT NULL) AND (fecha_evaluazion IS NULL)";
+      this.consultas = "UPDATE zolizitudez_trabajo SET cve_perzona_zoporte = " + this.cve_perzona_zoporte + " WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_kanzelazion IS NULL) AND (fecha_azignazion IS NOT NULL) AND (fecha_evaluazion IS NULL)";
       this.SMBD.insertarSQL(this.consultas);
    }
-   
-     
-
-   
 
    public void regiztro_kategorizazion() throws Exception {
-      this.consultas = "UPDATE zolizitudez_trabajo SET kategorizazion = '" + this.kategorizazion + "' " + "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_evaluazion IS NULL) AND (fecha_kanzelazion IS NULL)";
+      this.consultas = "UPDATE zolizitudez_trabajo SET kategorizazion = '" + this.kategorizazion + "' WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_evaluazion IS NULL) AND (fecha_kanzelazion IS NULL)";
       this.SMBD.insertarSQL(this.consultas);
    }
 
    public void regiztro_zoluzion() throws Exception {
-      this.consultas = "UPDATE zolizitudez_trabajo SET zoluzion = '" + this.zoluzion + "' " + "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_evaluazion IS NULL) AND (fecha_kanzelazion IS NULL) ";
+      this.consultas = "UPDATE zolizitudez_trabajo SET zoluzion = '" + this.zoluzion + "' WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_evaluazion IS NULL) AND (fecha_kanzelazion IS NULL) ";
       this.SMBD.insertarSQL(this.consultas);
       this.consultas = "SELECT cve_zolizitante AS maximo FROM zolizitudez_trabajo WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") ";
       this.cve_zolizitante = this.SMBD.buscaSQL(this.consultas);
-      this.aaa.encabezado = "Notification System (Solicitudes de trabajo - Seguimiento)";
-      this.mensaje = "ESTIMADO COMPA\u00d1ERO, HA RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", " + "INFORMANDOTE SOBRE LA SOLUCI\u00d3N QUE SE LE HA DADO A TU SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " " + "\n " + "\n " + "FAVOR DE INGRESAR AL SIISC (SOLICITUDES DE TRABAJO) Y REVISAR SI YA SE CORRIGIO EL PROBLEMA. " + "\n " + "\n " + "\n" + "ATENTAMENTE \n" + "SISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \n" + "DEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
-      this.aaa.envio_general(this.cve_zolizitante, this.mensaje);
    }
 
    public void concluir_zolizitud_trabajo() throws Exception {
-      this.consultas = "UPDATE zolizitudez_trabajo SET fecha_termino = " + this.SMBD.fecha_convertida(this.fecha_termino) + ", " + " cve_persona_evalua = " + this.intCvePersonaEvalua + " WHERE cve_zol = " + this.folio + " AND anio = " + this.anio + " AND fecha_evaluazion IS NULL " + " AND fecha_kanzelazion IS NULL";
+      this.consultas = "UPDATE zolizitudez_trabajo SET fecha_termino = " + this.SMBD.fecha_convertida(this.fecha_termino) + ",  cve_persona_evalua = " + this.intCvePersonaEvalua + " WHERE cve_zol = " + this.folio + " AND anio = " + this.anio + " AND fecha_evaluazion IS NULL  AND fecha_kanzelazion IS NULL";
       this.SMBD.insertarSQL(this.consultas);
       this.consultas = "SELECT cve_zolizitante AS maximo FROM zolizitudez_trabajo WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") ";
       this.cve_zolizitante = this.SMBD.buscaSQL(this.consultas);
@@ -158,44 +146,30 @@ public class zolicitud_zer {
    }
 
    public void kanzelar_zolizitudtrabajo() throws Exception {
-      this.consultas = "UPDATE zolizitudez_trabajo SET fecha_kanzelazion = " + this.SMBD.fecha_convertida(this.fecha_kanzelazion) + ", " + "motivo_kanzelazion = '" + this.motivo_kanzelazion + "' " + "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_kanzelazion IS NULL) ";
+      this.consultas = "UPDATE zolizitudez_trabajo SET fecha_kanzelazion = " + this.SMBD.fecha_convertida(this.fecha_kanzelazion) + ", motivo_kanzelazion = '" + this.motivo_kanzelazion + "' WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_kanzelazion IS NULL) ";
       this.SMBD.insertarSQL(this.consultas);
       this.consultas = "SELECT cve_zolizitante AS maximo FROM zolizitudez_trabajo WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") ";
       this.cve_zolizitante = this.SMBD.buscaSQL(this.consultas);
       this.aaa.encabezado = "Notification System (Solicitudes de trabajo - Cancelaci\u00f3n)";
-      this.mensaje = "ESTIMADO COMPA\u00d1ERO, HAS RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", " + "INFORMANDOTE QUE SE HA CANCELADO TU SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " " + "\n " + "\n " + "LA RAZON ES : " + this.motivo_kanzelazion + " " + "\n " + "\n" + "ATENTAMENTE \n" + "SISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \n" + "DEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
+      this.mensaje = "ESTIMADO COMPA\u00d1ERO, HAS RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", INFORMANDOTE QUE SE HA CANCELADO TU SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " \n \n LA RAZON ES : " + this.motivo_kanzelazion + " \n \nATENTAMENTE \nSISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \nDEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
       this.aaa.envio_general(this.cve_zolizitante, this.mensaje);
    }
 
    public void actualiza_num_inventario() throws Exception {
-      this.consultas = "UPDATE zolizitudez_trabajo SET num_inventario = '" + this.num_inventario + "' " + "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_kanzelazion IS NULL) ";
+      this.consultas = "UPDATE zolizitudez_trabajo SET num_inventario = '" + this.num_inventario + "' WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_kanzelazion IS NULL) ";
       this.SMBD.insertarSQL(this.consultas);
       this.consultas = "SELECT cve_bien AS maximo FROM alta_activo_fijo WHERE (num_inven LIKE '%" + this.num_inventario + "%') ";
       this.cve_bien = this.SMBD.buscaSQL(this.consultas);
       if (this.cve_bien > 0) {
-         this.consultas = "UPDATE zolizitudez_trabajo SET cve_bien = " + this.cve_bien + " " + "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") ";
+         this.consultas = "UPDATE zolizitudez_trabajo SET cve_bien = " + this.cve_bien + " WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") ";
          this.SMBD.insertarSQL(this.consultas);
       }
 
    }
 
    public void kalifikar_zolizitud_trabajo() throws Exception {
-      String ck  = (this.comentario_kalifikazion == null) ? "" : this.comentario_kalifikazion.replace("'", "''");
-      String ckt = (this.comentario_kalifikazion_tiempo == null) ? "" : this.comentario_kalifikazion_tiempo.replace("'", "''");
-      String cka = (this.comentario_kalifikazion_amabilidad == null) ? "" : this.comentario_kalifikazion_amabilidad.replace("'", "''");
-      String ce  = (this.comentario_evaluacion == null) ? "" : this.comentario_evaluacion.replace("'", "''");
-
-      this.consultas =
-         "UPDATE zolizitudez_trabajo SET " +
-         "kalifikazion = " + this.kalifikazion + ", " +
-         "kalifikazion_tiempo = " + this.kalifikazion_tiempo + ", " +
-         "kalifikazion_amabilidad = " + this.kalifikazion_amabilidad + ", " +
-         "comentario_kalifikazion = '" + ck + "', " +
-         "comentario_kalifikazion_tiempo = '" + ckt + "', " +
-         "comentario_kalifikazion_amabilidad = '" + cka + "', " +
-         "comentario_evaluacion = '" + ce + "', " +
-         "fecha_evaluazion = GETDATE() " +
-         "WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_kanzelazion IS NULL) ";
+      String var4 = this.comentario_evaluacion == null ? "" : this.comentario_evaluacion.replace("'", "''");
+      this.consultas = "UPDATE zolizitudez_trabajo SET kalifikazion = " + this.kalifikazion + ", kalifikazion_tiempo = " + this.kalifikazion_tiempo + ", kalifikazion_amabilidad = " + this.kalifikazion_amabilidad + ", comentario_evaluacion = '" + var4 + "', fecha_evaluazion = GETDATE() WHERE (cve_zol = " + this.folio + ") AND (anio = " + this.anio + ") AND (fecha_kanzelazion IS NULL) ";
       this.SMBD.insertarSQL(this.consultas);
    }
 
@@ -210,16 +184,19 @@ public class zolicitud_zer {
          this.cve_usuario_gral = this.rs.getInt(4);
          this.motivo_kanzelazion = this.rs.getString(5);
          this.aaa.encabezado = "Notification System (Solicitudes de trabajo - Evaluaci\u00f3n)";
-         this.mensaje = "ESTIMADO COMPA\u00d1ERO, HAS RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", " + "INFORMANDOTE QUE SE HA ATENDIDO TU SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " " + "\n " + "\n " + "PROBLEMA REPORTADO : " + this.motivo_kanzelazion + " \n \n " + "FAVOR DE EVALUAR LA SOLICITUD DE TRABAJO EN EL M\u00d3DULO: " + "\n " + "\n " + " GESTION DE LOS RECURSOS / SERVICIOS INFORM\u00c1TICOS / SOLICITUD DE TRABAJO INFORMATICO " + "\n" + "\n" + "ATENTAMENTE \n" + "SISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \n" + "DEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
+         this.mensaje = "ESTIMADO COMPA\u00d1ERO, HAS RECIBIDO UN MENSAJE DE NOTIFICACION DEL USUARIO " + this.SMBD.nombre_persona(this.cve_usuario_gral) + ", INFORMANDOTE QUE SE HA ATENDIDO TU SOLICITUD DE TRABAJO : " + this.folio + " / " + this.anio + " \n \n PROBLEMA REPORTADO : " + this.motivo_kanzelazion + " \n \n FAVOR DE EVALUAR LA SOLICITUD DE TRABAJO EN EL M\u00d3DULO: \n \n  GESTION DE LOS RECURSOS / SERVICIOS INFORM\u00c1TICOS / SOLICITUD DE TRABAJO INFORMATICO \n\nATENTAMENTE \nSISTEMA INTEGRAL DE INFORMACION DEL SISTEMA DE CALIDAD \nDEPARTAMENTO DE TECNOLOGIAS DE LA INFORMACION";
          this.aaa.envio_general(this.cve_zolizitante, this.mensaje);
       }
 
       this.SMBD.desconectarBD();
    }
 
-   public static void main(String[] arg) throws Exception {
+   public static void main(String[] var0) throws Exception {
       new zolicitud_zer();
-      System.out.println("NAL -- 10/12/2015  -- Se agrego funcion actualizar_persona_evalua y en la funcion de terminar sol se agrego actualiza campo de persona que evalua");
-      System.out.println("NAL -- 21/11/2025  -- Se modifico la funcion reazignazion_zolizitud"); 
+      //System.out.println("NAL -- 10/12/2015  -- Se agrego funcion actualizar_persona_evalua y en la funcion de terminar sol se agrego actualiza campo de persona que evalua");
+      //System.out.println("NAL -- 21/11/2025  -- Se modifico la funcion reazignazion_zolizitud");
+      System.out.println("GiovanniSnahcez -- 10/12/2025  -- Se modifico la funcion registro_zoluzion para eliminar el correo de notificacion al solicitante");
+      System.out.println("GiovanniSnahcez -- 10/12/2025  -- Se modifico la funcion kanzelar_zolizitudtrabajo para corregir el error de cancelacion de solicitud");
+
    }
 }
